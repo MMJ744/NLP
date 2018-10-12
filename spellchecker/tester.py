@@ -61,4 +61,6 @@ def correction(word):
 
 print(correction("reciet"))
 print(correction("adres"))
-
+print(correction("cate"))
+print(correction("caf"))
+print(correction("people2"))
