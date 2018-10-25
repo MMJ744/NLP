@@ -11,8 +11,8 @@ NP[NUM=?n] -> PropN[NUM=?n]
 NP[NUM=?n] -> Det[NUM=?n] N[NUM=?n]
 NP[NUM=pl] -> N[NUM=pl]
 # VP expansion productions
-VP[TENSE=?t, NUM=?n] -> IV[TENSE=?t, NUM=?n] | IV[TENSE=?t, NUM=?n] VP[TENSE=?t, NUM=?n] | IV[TENSE=?t, NUM=?n] VP[TENSE=?t, NUM=?n] PP
-VP[TENSE=?t, NUM=?n] -> TV[TENSE=?t, NUM=?n] NP | TV[TENSE=?t, NUM=?n] VP[TENSE=?t, NUM=?n] | TV[TENSE=?t, NUM=?n] VP[TENSE=?t, NUM=?n] PP
+VP[TENSE=?t, NUM=?n] -> IV[TENSE=?t, NUM=?n] | IV[TENSE=?t, NUM=?n] VP[TENSE=?t, NUM=?n] | IV[TENSE=?t, NUM=?n] VP[TENSE=?t, NUM=?n] PP | IV[TENSE=?t, NUM=?n] PP
+VP[TENSE=?t, NUM=?n] -> TV[TENSE=?t, NUM=?n] NP | TV[TENSE=?t, NUM=?n] VP[TENSE=?t, NUM=?n] | TV[TENSE=?t, NUM=?n] VP[TENSE=?t, NUM=?n] PP | TV[TENSE=?t, NUM=?n] PP
 # ###################
 # Lexical Productions
 # ###################

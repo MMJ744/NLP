@@ -6,16 +6,6 @@ reader = WordListCorpusReader('', ['words.txt'])
 words = [nltk.word_tokenize(i) for i in reader.words()]
 cp = load_parser('grammar.fcfg', trace=0)
 
-for sentence in words:
-    print(sentence)
-    for tree in cp.parse(sentence):
-        print(tree)
-    
-
-
-
-
-
 
 from nltk.corpus import treebank
 from nltk.tag import DefaultTagger
@@ -31,4 +21,19 @@ def backoff_tagger(train_sents, tagger_classes, backoff=None):
         backoff = cls(train_sents, backoff=backoff)
     return backoff
 tagger = backoff_tagger(train_set, [UnigramTagger, BigramTagger, TrigramTagger], backoff=DefaultTagger('NN'))
-print(tagger.evaluate(test_set))
+for sentence in words:
+    print(tagger.tag(sentence))
+
+
+
+
+for sentence in words:
+    print(sentence)
+    for tree in cp.parse(sentence):
+        print(tree)
+    
+
+
+
+
+
