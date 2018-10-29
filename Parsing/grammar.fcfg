@@ -4,7 +4,7 @@
 # Grammar Productions
 # ###################
 # S expansion productions
-S -> NP[NUM=?n] VP[NUM=?n] Pun
+S -> NP[NUM=?n] VP[NUM=?n] Pun[NUM=?n] | NP[NUM=?n] VP[NUM=?n]
 # NP expansion productions
 NP[NUM=?n] -> N[NUM=?n]
 NP[NUM=?n] -> PropN[NUM=?n] 
@@ -28,6 +28,6 @@ IV[TENSE=pres,  NUM=pl] -> 'disappear' | 'walk' | 'going'
 TV[TENSE=pres, NUM=pl] -> 'see' | 'like' 
 IV[TENSE=past] -> 'disappeared' | 'walked'
 TV[TENSE=past] -> 'saw' | 'liked' | 'enjoyed'
-Pun -> '.' | '!' | '?'
+Pun[NUM=?n] -> '.' | '!' | '?'
 PP -> P NP
 P -> "in" | "on" | "by" | "with" | "to"
