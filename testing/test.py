@@ -13,13 +13,15 @@ unigramTagger = UnigramTagger(train_set)
 from nltk.tag import BigramTagger, TrigramTagger
 bigramTagger = BigramTagger(train_set, cutoff=2)
 trigramTagger = TrigramTagger(train_set, cutoff=3)
+
+
 def backoff_tagger(train_sents, tagger_classes, backoff=None):
     for cls in tagger_classes :
         backoff = cls(train_sents, backoff=backoff)
     return backoff
+
+
 tagger = backoff_tagger(train_set, [UnigramTagger, BigramTagger, TrigramTagger], backoff=DefaultTagger('NN'))
-
-
 
 taggedTokens = tagger.tag(tokens)
 print(taggedTokens)
