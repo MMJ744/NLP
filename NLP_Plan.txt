@@ -1,0 +1,81 @@
+NLP ASSIGNMENT PLAN
+
+1. Load files into a corpora (done)
+2. Tokenize the data (done)
+3. POS AND NER tag the data
+	Use a backoff tagger train on combination of given "Training full" and nltk corpus's 
+4. Use regex to find start and end time if there is one
+5. Using the named entities differentiate between locations and people
+	Use wikification and or the given list of names to identify names and global locations,
+	treat other locations as likely to be room number/code and specific to the university of venue.
+	Regex also likely to be used with the POS tagged data to assist this.
+6. Try to pick out the actual main speaker from all names in the data probably by a combination of who's mentioned first,
+	names before phrases like will be giving or holding a talk and if I is used with words like talking or giving assume
+	its the person who sent the email.
+-----------------------------------------------
+Method to evaluate my entity tagging 
+
+Firstly for generally tagging
+
+Count the number of entities tagger has tagged correctly, calculate the number of entities the tagger has tagged
+correctly tagged / total tagged gives - Precision 
+
+Count total number of tagged entities in the test data.
+correctly tagged / total tagged entities gives - Recall
+
+Get F measure via 2*(Precision*Recall / Precision + Recall)
+
+Repeat for a few specific tags most likely: start and end time, topic, speaker and location.
+--------------------------------------------------------
+Ontology Construction
+
+1. Pick out different topics for individual emails/seminars, use parts of emails if sender=speaker as a small weight
+e.g. .cs in the address.
+2. Wikification will help build links between topics as pages will have links to other pages and or a contain other topics.
+Thinking of constructing this in a tree like structure with general topics as a root e.g. Computer Science and things like Artificial intelligence being
+a leaf below it with things like machine learning or computer vision below that. 
+Links between topics in different wider topics could be dealt with by simply being in both tree's or having some form of pointer to link them together,
+how ever if all we need to do is find all emails related to a wider topic then this wont be needed.
+Searching for keywords also will help in identifying topics.
+
+Base topics like Science or English might be hard coded in to give nice starts as automatically generating a tree will be complex and likely create
+messy trees if no base topics given. 
+
+Wordnet will help with constructing the links between the topics and subtopics as this will likely have stronger links than wikification.
+Relation extraction corpus's could also be useful for finding links however need more research.
+If each email is tagged with the topic or topics it belongs to,  then to find all emails related to a topic. Take all emails tagged with the topic and 
+any topics below it in all trees its in.
+---------------------------------------------------------
+Current code, only added as to allow for pointing out if I'm going in the completely wrong direction.
+
+import nltk
+from nltk.corpus import treebank
+from nltk.tag import DefaultTagger
+from nltk.tag import UnigramTagger
+from nltk.tag import BigramTagger, TrigramTagger
+from os import listdir
+from os.path import isfile, join
+path = '/Users/Matthew/AppData/Roaming/nltk_data/corpora/untagged/'
+onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
+myCorpus = nltk.corpus.reader.plaintext.PlaintextCorpusReader(path, onlyfiles)
+
+def backoff_tagger(train_sents, tagger_classes, backoff=None):
+    for cls in tagger_classes :
+        backoff = cls(train_sents, backoff=backoff)
+    return backoff
+
+train_set = treebank.tagged_sents()[:4000]
+test_set = treebank.tagged_sents()[2000:]
+unigramTagger = UnigramTagger(train_set)
+bigramTagger = BigramTagger(train_set, cutoff=2)
+trigramTagger = TrigramTagger(train_set, cutoff=3)
+tagger = backoff_tagger(train_set, [UnigramTagger, BigramTagger, TrigramTagger], backoff=DefaultTagger('NN'))
+words = [nltk.word_tokenize(i) for i in myCorpus.words()]
+for sentence in words:
+    taggedSentence = tagger.tag(sentence)
+    print(taggedSentence)
+    tree = nltk.ne_chunk(taggedSentence, binary=False)
+    print(tree)
+	
+	
+Currently only having minor issues with the structure of read in data.
