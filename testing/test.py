@@ -12,7 +12,7 @@ test_set = treebank.tagged_sents()[2000:]
 from nltk.tag import UnigramTagger
 unigramTagger = UnigramTagger(train_set)
 from nltk.tag import BigramTagger, TrigramTagger
-#bigramTagger = BigramTagger(train_set, cutoff=2)
+bigramTagger = BigramTagger(train_set, cutoff=2)
 trigramTagger = TrigramTagger(train_set, cutoff=3)
 tagger = backoff_tagger(train_set, [UnigramTagger, BigramTagger, TrigramTagger], backoff=DefaultTagger('NN'))
 print(tagger.evaluate(test_set))
