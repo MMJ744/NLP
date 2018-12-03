@@ -1,35 +1,57 @@
+from pickle import dump, load
+
 import nltk
 from nltk import RegexpTagger
-import pickle
-from pickle import dump, load
 from nltk.corpus import treebank, brown
-train_set = treebank.tagged_sents()[:4000] + brown.tagged_sents()[:4000]
-test_set = treebank.tagged_sents()[2000:]
 from nltk.tag import DefaultTagger, UnigramTagger, BigramTagger, TrigramTagger
-from nltk import ClassifierBasedPOSTagger
-import brill_tagger_wrapper
+
 from brill_tagger_wrapper import train_brill_tagger
-taggerTrained = False #Load or save tagger
+
+taggerTrained = True  # Load or save tagger
+
+
+def makeTrainSet(corpora):
+    list = []
+    for corpus in corpora:
+        x = int(len(corpus.tagged_sents()) * 0.95)
+        list = list + corpus.tagged_sents()[:x]
+    return list
+
+
+def makeTestSet(corpora):
+    list = []
+    for corpus in corpora:
+        x = int(len(corpus.tagged_sents()) * 0.05)
+        list = list + corpus.tagged_sents()[x:]
+    return list
+
+
+test_set = makeTestSet([brown, treebank])
+
 
 def backoff_tagger(train_sents, tagger_classes, backoff=None):
-    for cls in tagger_classes :
+    for cls in tagger_classes:
         backoff = cls(train_sents, backoff=backoff)
     return backoff
+
+
 if taggerTrained:
     input = open('data/bestTagger.pkl', 'rb')
     tagger = load(input)
     input.close()
 else:
     output = open('data/bestTagger.pkl', 'wb')
+    train_set = makeTrainSet([brown, treebank])
     backoffTagger = backoff_tagger(train_set, [UnigramTagger, BigramTagger, TrigramTagger], backoff=DefaultTagger('NN'))
-    brillTagger   = train_brill_tagger(backoffTagger, train_set)
+    brillTagger = train_brill_tagger(backoffTagger, train_set)
     dump(brillTagger, output, -1)
     output.close()
     tagger = brillTagger
 print(tagger.evaluate(test_set))
 print(tagger.evaluate(brown.tagged_sents()))
-#cpos = ClassifierBasedPOSTagger(train=train_set)
-#print(cpos.evaluate(test_set))
+print(tagger.evaluate(treebank.tagged_sents()))
+# cpos = ClassifierBasedPOSTagger(train=train_set)
+# print(cpos.evaluate(test_set))
 ##################
 #  Regex tagger  #
 ##################
@@ -39,12 +61,6 @@ patterns = [
 ]
 regexTagger = RegexpTagger(patterns)
 
-
-
-#try out the regex tagger
+# try out the regex tagger
 x = nltk.word_tokenize("its at 9:00 till 5-00 on bigroad")
 print(regexTagger.tag(x))
-
-
-
-
