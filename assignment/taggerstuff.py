@@ -10,7 +10,7 @@ from brill_tagger_wrapper import train_brill_tagger
 taggerTrained = True  # Load or save tagger
 
 
-def makeTrainSet(corpora):
+def make_train_set(corpora):
     list = []
     for corpus in corpora:
         x = int(len(corpus.tagged_sents()) * 0.95)
@@ -18,7 +18,7 @@ def makeTrainSet(corpora):
     return list
 
 
-def makeTestSet(corpora):
+def make_test_set(corpora):
     list = []
     for corpus in corpora:
         x = int(len(corpus.tagged_sents()) * 0.05)
@@ -26,7 +26,7 @@ def makeTestSet(corpora):
     return list
 
 
-test_set = makeTestSet([brown, treebank])
+test_set = make_test_set([brown, treebank])
 
 
 def backoff_tagger(train_sents, tagger_classes, backoff=None):
@@ -41,7 +41,7 @@ if taggerTrained:
     input.close()
 else:
     output = open('data/bestTagger.pkl', 'wb')
-    train_set = makeTrainSet([brown, treebank])
+    train_set = make_train_set([brown, treebank])
     backoffTagger = backoff_tagger(train_set, [UnigramTagger, BigramTagger, TrigramTagger], backoff=DefaultTagger('NN'))
     brillTagger = train_brill_tagger(backoffTagger, train_set)
     dump(brillTagger, output, -1)
