@@ -5,7 +5,7 @@ from nltk import RegexpTagger
 from nltk.corpus import treebank, brown
 from nltk.tag import DefaultTagger, UnigramTagger, BigramTagger, TrigramTagger
 
-from brill_tagger_wrapper import train_brill_tagger
+import brill_tagger_wrapper
 
 taggerTrained = True  # Load or save tagger
 
@@ -43,7 +43,7 @@ else:
     output = open('data/bestTagger.pkl', 'wb')
     train_set = make_train_set([brown, treebank])
     backoffTagger = backoff_tagger(train_set, [UnigramTagger, BigramTagger, TrigramTagger], backoff=DefaultTagger('NN'))
-    brillTagger = train_brill_tagger(backoffTagger, train_set)
+    brillTagger = brill_tagger_wrapper.train_brill_tagger(backoffTagger, train_set)
     dump(brillTagger, output, -1)
     output.close()
     tagger = brillTagger
