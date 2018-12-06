@@ -8,8 +8,7 @@ def extract_sem_info(data):
 		'speaker': '<speaker>(.*?)</speaker>',
 		'location': '<location>(.*?)</location>',
 		'sentence': '<sentence>(.*?)</sentence>',
-		'topic': '<topic>(.*?)</topic>',
-		'paragraph': '<paragraph>(.*?)</topic>'
+		'paragraph': '<paragraph>(.*?)</paragraph>'
 	}
 	entities = dict()
 	for key, value in patterns.items():
