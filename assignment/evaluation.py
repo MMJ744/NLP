@@ -12,8 +12,22 @@ def extract_sem_info(data):
 	}
 	entities = dict()
 	for key, value in patterns.items():
-		entities[key] = set(re.findall(r'' + value, data))
+		entities[key] = set(re.findall(value, data))
 	return entities
+
+def eval_all():
+	pres = []
+	selfs = []
+	for c in range(301, 485):  # 485
+		file = open('data/test_tagged/' + str(c) + '.txt', 'r')
+		pre = file.read()
+		pres = pres + [extract_sem_info(pre)]
+		file.close()
+		file = open('output/' + str(c) + '.txt', 'r')
+		self = file.read()
+		selfs = selfs + [extract_sem_info(self)]
+		file.close()
+	return evaluate_tagging(pres, selfs)
 
 
 def evaluate_correct(pretagged, selftagged):
@@ -56,6 +70,8 @@ def evaluate_tagging(pretagged, selftagged):
 		add_dict(pre_totals, count_entities(pretagged[c]))
 		add_dict(self_totals, count_entities(selftagged[c]))
 	evaluation = dict()
+	print(pre_totals)
+	print(self_totals)
 	for part, items in correct_dict.items():
 		entity = dict()
 		try:
@@ -64,7 +80,7 @@ def evaluate_tagging(pretagged, selftagged):
 			precision = 0
 		entity['precision'] = precision
 		try:
-			recall = correct_dict['total'] / pre_totals[part]
+			recall = correct_dict[part] / pre_totals[part]
 		except ZeroDivisionError:
 			recall = 0
 		entity['recall'] = recall
@@ -79,4 +95,4 @@ def evaluate_tagging(pretagged, selftagged):
 
 x = '<speaker>Ramesh Bollapragada</speaker>, gdr <stime>1:00 PM</stime> Place:    <location>4623 WEAN HALL</location>'
 y = '<speaker>Ramesh Bollapragada</speaker>, gdr <stime>1:00 PM</stime> Place:   '
-print(evaluate_tagging([extract_sem_info(x), extract_sem_info(x)], [extract_sem_info(y), extract_sem_info(y)]))
+#print(evaluate_tagging([extract_sem_info(x), extract_sem_info(x)], [extract_sem_info(y), extract_sem_info(y)]))

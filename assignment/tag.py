@@ -3,27 +3,21 @@ def save_tagged_data(data, entities, number):
 	tagged_data = ""
 	for part, items in entities.items():
 		for item in items:
-			data = re.sub(item, '<' + part + '>\\g<0></' + part + '>', data)
-	# file = open("output/" + str(number) + ".txt")
-	# file.write(data)
-	# file.close()
-	return data
+			data = re.sub(re.escape(item), '<' + part + '>\\g<0></' + part + '>', data)
+	file = open("output/" + str(number) + ".txt", 'w')
+	file.write(data)
+	file.close()
 
 
 def equal_time(time1, time2):
 	t1 = time1
 	t2 = time2
-	print(t1 + "---" + t2)
-	if t1 == t2:
-		return True
 	t1 = re.sub(':00', '',t1)
 	t2 = re.sub(':00','',t2)
-	print(t1 + "---" + t2)
-	regx = '\s?[AaPp].?[mM]'
+	regx = '\s?[AaPp].?[mM]|from|at|to|till|\s'
 	t1 = re.sub(regx,'',t1)
 	t2 = re.sub(regx, '', t2)
-	print(t1 + "---" + t2)
-	return int(t1)==int(t2)
+	return t1==t2
 
 def sort_times(times, extra_times):
 	stime = ""
@@ -47,19 +41,19 @@ def tag_regex_data(data):
 		'sentence': '[A-Z][^\.\!\?]*[\.\!\?](?:(?=\s)|"\s+[a-z][^\.\!\?]*[\.\!\?]|[A-z][^\.\!\?]*[\.\!\?]|)'
 	}
 	entities = dict()
-	for key, pattern in patterns.items():
-		entities[key] = (re.findall(pattern, data))
+	entities['sentence'] = re.findall(patterns['sentence'],data.split('Abstract:', 1)[1])
 	entities['sentence'] = [x[:-1] for x in entities['sentence']]
+	entities['time'] = (re.findall(patterns['time'], data))
 	times = entities.pop('time')
-	print(times)
-	extra_times = re.findall(tregx,data)
-	print(extra_times)
+	extra_times = set(re.findall(r'(?:(?:[0-2]?[0-9]:[0-5][0-9](?:\s?(?:AM|PM|am|pm))?)|(?:[0-2]?[0-9]\s?(?:[AaPp].?[mM])))',data))
+	singles = set(re.findall('(?:from|at|to|till)\s[0-9]\s',data))
+	extra_times = extra_times.union(singles)
 	stimes, etimes = sort_times(times, extra_times)
-	print(stimes)
-	print(etimes)
+	entities['stime'] = stimes
+	entities['etime'] = etimes
 	return entities
 
 s = 'Brett said "hello" to me. And I dont know whats happening but "Why is it doing this!" is bad.'
 t = 'Time:     1:00 PM - 3PM          fhniiieh \n etjeikjfi 16:54 jfeijf \n 1pm'
-print(tag_regex_data(t))
+#print(tag_regex_data(s))
 

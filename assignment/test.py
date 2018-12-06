@@ -3,18 +3,23 @@ from nltk.corpus.reader import WordListCorpusReader
 from nltk.corpus.reader import PlaintextCorpusReader
 from os import listdir
 from os.path import isfile, join
-from tag import tag_regex_data
+from tag import tag_regex_data, save_tagged_data
+from evaluation import  eval_all
 from pickle import load
 
 read = open('data/bestTagger.pkl', 'rb')
 tagger = load(read)
 read.close()
 current = 301
-for c in range(480, 481): #486
+for c in range(301, 485): #485
     reader = PlaintextCorpusReader('data/untagged/', [str(c) + '.txt'])
     file = open('data/untagged/' + str(c) + '.txt', 'r')
-    print(tag_regex_data(file.read()))
-    #print(reader.words())
+    text = file.read()
+    print(text)
+    file.close()
+    entities = tag_regex_data(text)
+    save_tagged_data(text, entities, c)
+print(eval_all())
 
 
 # for i in reader.words():
