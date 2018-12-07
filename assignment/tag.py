@@ -45,7 +45,7 @@ def tag_regex_data(data):
 		'time': '(?:Time:\s*)('+tregex+')\s*-\s*('+tregex+')|(?:Time:\s*)('+tregex+')',
 		'sentence': '[A-Z][^\.\!\?]*[\.\!\?](?:(?=\s)|"\s+[a-z][^\.\!\?]*[\.\!\?]|[A-z][^\.\!\?]*[\.\!\?]|)',
 		'location': '(?:Place|WHERE|Location)(?::\s*)(.*)',
-		'speaker': '(?:Who|WHO|Speaker|SPEAKER)(?::\s*)([^,\n]*)',
+		'speaker': '(?:Who|WHO|Speaker|SPEAKER)(?::\s*)([^,(\n]*)',
 	}
 	entities = dict()
 	entities['sentence'] = re.findall(patterns['sentence'],data.split('Abstract:', 1)[1])
@@ -53,6 +53,13 @@ def tag_regex_data(data):
 	entities['time'] = re.findall(patterns['time'], data)
 	entities['location'] = re.findall(patterns['location'], data)
 	entities['speaker'] = re.findall(patterns['speaker'], data)
+	new_speak = []
+	for s in entities['speaker']:
+		if s.endswith(' '):
+			new_speak.append(s[:-1])
+			print("shortened")
+		else: new_speak.append(s)
+	entities['speaker'] = new_speak
 	print(entities['speaker'])
 	times = set(entities.pop('time'))
 	extra_times = set(re.findall(tregex,data))
