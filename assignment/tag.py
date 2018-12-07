@@ -51,7 +51,6 @@ def tag_regex_data(data):
 	entities['location'] = re.findall(patterns['location'], data)
 	times = entities.pop('time')
 	extra_times = set(re.findall(tregx,data))
-	#extra_times = set([x[1:] for x in extra_times])
 	singles = set(re.findall('(?:from|at|to|till|until)\s[0-9]\s',data))
 	extra_times = extra_times.union(singles)
 	stimes, etimes = sort_times(times, extra_times)
