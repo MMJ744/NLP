@@ -12,18 +12,14 @@ tagger = load(read)
 read.close()
 current = 301
 for c in range(301, 485): #485
-    reader = PlaintextCorpusReader('data/untagged/', [str(c) + '.txt'])
+    reader = PlaintextCorpusReader('data/test_untagged/', [str(c) + '.txt'])
     file = open('data/untagged/' + str(c) + '.txt', 'r')
     text = file.read()
-    print(text)
     file.close()
     entities = tag_regex_data(text)
     save_tagged_data(text, entities, c)
-print(eval_all())
-
-
-# for i in reader.words():
-#    m = re.search('at [0-9]+(pm|am)', i)
-#    if (m): print(m.group(0))
-#    m2 = re.search('[0-9]+:[0-9]+ (PM|AM|pm|am)', i)
-#    if (m2): print(m2.group(0))
+eval = eval_all()
+for key, value in eval.items():
+    print('***-'+key.upper()+'-***')
+    for k, v in value.items():
+        print(k + ': ' + str(round(v*100)) + '%')

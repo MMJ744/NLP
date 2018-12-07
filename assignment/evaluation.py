@@ -12,7 +12,7 @@ def extract_sem_info(data):
 	}
 	entities = dict()
 	for key, value in patterns.items():
-		entities[key] = re.findall(value, data)
+		entities[key] = re.findall(value, data, re.S)
 	return entities
 
 def eval_all():
@@ -30,14 +30,17 @@ def eval_all():
 	return evaluate_tagging(pres, selfs)
 
 
-def evaluate_correct(pretagged, selftagged):
+def evaluate_correct(p, s):
+	pretagged = p.copy()
+	selftagged = s.copy()
 	correct_dict = dict()
 	correct_total = 0
 	for part, items in selftagged.items():
 		correct = pretagged[part]
 		correct_count = 0
-		for entity in correct:
-			if entity in items:
+		for entity in items:
+			if entity in correct:
+				correct.remove(entity)
 				correct_count = correct_count + 1
 				correct_total = correct_total + 1
 		correct_dict[part] = correct_count
@@ -45,33 +48,33 @@ def evaluate_correct(pretagged, selftagged):
 	return correct_dict
 
 
-def count_entities(x):
-	counts = dict()
-	c = 0
-	for part, items in x.items():
-		counts[part] = len(items)
-		c = c + len(items)
-	counts['total'] = c
-	return counts
+def count_entities(x, d):
+	for key, value in x.items():
+		d[key] = d[key] + len(value)
 
 
-def add_dict(x, y):
-	for key, value in y.items():
-		x[key] = x[key] + y[key]
+def count_totals(l):
+	for d in l:
+		c = 0
+		for key, value in d.items():
+			c = c + value
+		d['total'] = c
 
 
 def evaluate_tagging(pretagged, selftagged):
-	correct_dict = {'stime': 0, 'etime': 0, 'speaker': 0, 'location': 0, 'sentence': 0, 'paragraph': 0,
-	                'total': 0}
+	correct_dict = {'stime': 0, 'etime': 0, 'speaker': 0, 'location': 0, 'sentence': 0, 'paragraph': 0, 'total': 0}
 	pre_totals = correct_dict.copy()
 	self_totals = correct_dict.copy()
 	for c in range(0, len(pretagged)):
-		add_dict(correct_dict, evaluate_correct(pretagged[c], selftagged[c]))
-		add_dict(pre_totals, count_entities(pretagged[c]))
-		add_dict(self_totals, count_entities(selftagged[c]))
+		count_entities(pretagged[c], pre_totals)
+		count_entities(selftagged[c], self_totals)
+		for key, value in evaluate_correct(pretagged[c], selftagged[c]).items():
+			correct_dict[key] = correct_dict[key] + value
+	count_totals([pre_totals, self_totals])
 	evaluation = dict()
 	print(pre_totals)
 	print(self_totals)
+	print(correct_dict)
 	for part, items in correct_dict.items():
 		entity = dict()
 		try:

@@ -3,7 +3,8 @@ def save_tagged_data(data, entities, number):
 	tagged_data = ""
 	for part, items in entities.items():
 		for item in items:
-			data = re.sub(re.escape(item), '<' + part + '>\\g<0></' + part + '>', data)
+			pat = '(?!<'+part+'>)('+re.escape(item)+')(?!<\/'+part+'>)'
+			data = re.sub(pat, '<' + part + '>\\g<0></' + part + '>', data)
 	file = open("output/" + str(number) + ".txt", 'w')
 	file.write(data)
 	file.close()
@@ -17,7 +18,8 @@ def equal_time(time1, time2):
 	regx = '\s?[AaPp].?[mM]|from|at|to|till|\s'
 	t1 = re.sub(regx,'',t1)
 	t2 = re.sub(regx, '', t2)
-	return t1==t2
+	return t1 == t2
+
 
 def sort_times(times, extra_times):
 	stime = ""
@@ -34,26 +36,25 @@ def sort_times(times, extra_times):
 		if equal_time(time, etime): etimes.add(time)
 	return (stimes, etimes)
 
+
 def tag_regex_data(data):
-	tregx = '(?:[0-2]?[0-9]:[0-5][0-9](?:\s?(?:AM|PM|am|pm))?)|(?:[0-2]?[0-9]\s?(?:[AaPp].?[mM]))'
+	tregx = '(?:[0-2]?[0-9]:[0-5][0-9](?:\s?(?:[AaPp].?[mM]))?)|(?:[0-2]?[0-9]\s?(?:[AaPp]\.?[mM]\.?))'
 	patterns = {
 		'time': '(?:Time:\s*)('+tregx+')\s*-\s*('+tregx+')|(?:Time:\s*)('+tregx+')',
-		'sentence': '[A-Z][^\.\!\?]*[\.\!\?](?:(?=\s)|"\s+[a-z][^\.\!\?]*[\.\!\?]|[A-z][^\.\!\?]*[\.\!\?]|)'
+		'sentence': '[A-Z][^\.\!\?]*[\.\!\?](?:(?=\s)|"\s+[a-z][^\.\!\?]*[\.\!\?]|[A-z][^\.\!\?]*[\.\!\?]|)',
+		'location': '(?:Place|WHERE|Location)(?::\s*)(.*)'
 	}
 	entities = dict()
 	entities['sentence'] = re.findall(patterns['sentence'],data.split('Abstract:', 1)[1])
 	entities['sentence'] = [x[:-1] for x in entities['sentence']]
-	entities['time'] = (re.findall(patterns['time'], data))
+	entities['time'] = re.findall(patterns['time'], data)
+	entities['location'] = re.findall(patterns['location'], data)
 	times = entities.pop('time')
-	extra_times = set(re.findall(r'(?:(?:[0-2]?[0-9]:[0-5][0-9](?:\s?(?:AM|PM|am|pm))?)|(?:[0-2]?[0-9]\s?(?:[AaPp].?[mM])))',data))
-	singles = set(re.findall('(?:from|at|to|till)\s[0-9]\s',data))
+	extra_times = set(re.findall(tregx,data))
+	#extra_times = set([x[1:] for x in extra_times])
+	singles = set(re.findall('(?:from|at|to|till|until)\s[0-9]\s',data))
 	extra_times = extra_times.union(singles)
 	stimes, etimes = sort_times(times, extra_times)
 	entities['stime'] = stimes
 	entities['etime'] = etimes
 	return entities
-
-s = 'Brett said "hello" to me. And I dont know whats happening but "Why is it doing this!" is bad.'
-t = 'Time:     1:00 PM - 3PM          fhniiieh \n etjeikjfi 16:54 jfeijf \n 1pm'
-#print(tag_regex_data(s))
-
