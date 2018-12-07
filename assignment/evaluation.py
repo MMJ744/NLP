@@ -1,6 +1,5 @@
 import re
 
-
 def extract_sem_info(data):
 	patterns = {
 		'stime': '<stime>(.*?)</stime>',
@@ -11,21 +10,23 @@ def extract_sem_info(data):
 		'paragraph': '<paragraph>(.*?)</paragraph>'
 	}
 	entities = dict()
+	tags = '<[/]?stime>|<[/]?etime>|<[/]?speaker>|<[/]?location>|<[/]?sentence>|<[/]?paragraph>'
 	for key, value in patterns.items():
-		entities[key] = re.findall(value, data, re.S)
+		extracted = re.findall(value, data, re.S)
+		entities[key] = [re.sub(tags, '', x) for x in extracted]
 	return entities
 
-def eval_all():
+def eval_all(selfs):
 	pres = []
-	selfs = []
+	#selfs = []
 	for c in range(301, 485):  # 485
 		file = open('data/test_tagged/' + str(c) + '.txt', 'r')
 		pre = file.read()
 		pres = pres + [extract_sem_info(pre)]
 		file.close()
-		file = open('output/' + str(c) + '.txt', 'r')
-		self = file.read()
-		selfs = selfs + [extract_sem_info(self)]
+		#file = open('output/' + str(c) + '.txt', 'r')
+		#self = file.read()
+		#selfs = selfs + [extract_sem_info(self)]
 		file.close()
 	return evaluate_tagging(pres, selfs)
 

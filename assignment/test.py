@@ -11,15 +11,17 @@ read = open('data/bestTagger.pkl', 'rb')
 tagger = load(read)
 read.close()
 current = 301
+self = []
 for c in range(301, 485): #485
     reader = PlaintextCorpusReader('data/test_untagged/', [str(c) + '.txt'])
     file = open('data/untagged/' + str(c) + '.txt', 'r')
     text = file.read()
     file.close()
     entities = tag_regex_data(text)
+    self.append(entities)
     save_tagged_data(text, entities, c)
-eval = eval_all()
+eval = eval_all(self)
 for key, value in eval.items():
     print('***-'+key.upper()+'-***')
     for k, v in value.items():
-        print(k + ': ' + str(round(v*100)) + '%')
+        print(k + ': ' + str(v*100) + '%')
