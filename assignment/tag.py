@@ -1,4 +1,5 @@
 import re
+from nltk.tag.stanford import  StanfordPOSTagger, StanfordNERTagger
 def save_tagged_data(data, entities, number):
 	tagged_data = ""
 	for part, items in entities.items():
@@ -57,10 +58,8 @@ def tag_regex_data(data):
 	for s in entities['speaker']:
 		if s.endswith(' '):
 			new_speak.append(s[:-1])
-			print("shortened")
 		else: new_speak.append(s)
 	entities['speaker'] = new_speak
-	print(entities['speaker'])
 	times = set(entities.pop('time'))
 	extra_times = set(re.findall(tregex,data))
 	singles = set(re.findall('(?:from|at|to|till|until)\s[0-9]\s',data))
