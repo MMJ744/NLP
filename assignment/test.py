@@ -13,6 +13,7 @@ read.close()
 current = 301
 self = []
 for c in range(301, 485): #485
+    print(c)
     reader = PlaintextCorpusReader('data/test_untagged/', [str(c) + '.txt'])
     file = open('data/untagged/' + str(c) + '.txt', 'r')
     text = file.read()

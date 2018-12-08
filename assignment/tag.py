@@ -40,6 +40,13 @@ def tag_data(data):
 	return  entities
 
 
+def remove_sentence_noise(data):
+	data = data.split('Abstract:', 1)[1]
+	pattern = '\n(?:\s\s.*|----.*|\s*(?:[A-z]\s?)*:)'
+	data = re.sub(pattern,'',data)
+	return data
+
+
 def tag_regex_data(data):
 	tregex = '(?:[0-2]?[0-9]:[0-5][0-9](?:\s?(?:[AaPp].?[mM]))?)|(?:[0-2]?[0-9]\s?(?:[AaPp]\.?[mM]))'
 	patterns = {
@@ -47,13 +54,17 @@ def tag_regex_data(data):
 		'sentence': '[A-Z][^\.\!\?]*[\.\!\?](?:(?=\s)|"\s+[a-z][^\.\!\?]*[\.\!\?]|[A-z][^\.\!\?]*[\.\!\?]|)',
 		'location': '(?:Place|WHERE|Location)(?::\s*)(.*)',
 		'speaker': '(?:Who|WHO|Speaker|SPEAKER)(?::\s*)([^,(\n]*)',
+		'speaker2': '(?:Lecture by\s)([^,(\n]*)'
 	}
 	entities = dict()
-	entities['sentence'] = re.findall(patterns['sentence'],data.split('Abstract:', 1)[1])
+	entities['sentence'] = re.findall(patterns['sentence'],remove_sentence_noise(data))
 	entities['sentence'] = [x[:-1] for x in entities['sentence']]
+	for x in entities['sentence']:
+		if x=='Dr': entities['sentence'].remove(x)
 	entities['time'] = re.findall(patterns['time'], data)
 	entities['location'] = re.findall(patterns['location'], data)
 	entities['speaker'] = re.findall(patterns['speaker'], data)
+	[entities['speaker'].append(x) for x in re.findall(patterns['speaker2'],data)]
 	new_speak = []
 	for s in entities['speaker']:
 		if s.endswith(' '):
