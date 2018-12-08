@@ -44,6 +44,8 @@ def evaluate_correct(p, s):
 				correct.remove(entity)
 				correct_count = correct_count + 1
 				correct_total = correct_total + 1
+			else:
+				if part == 'speaker':print(entity)
 		correct_dict[part] = correct_count
 	correct_dict['total'] = correct_total
 	return correct_dict

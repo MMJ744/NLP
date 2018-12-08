@@ -36,8 +36,16 @@ def sort_times(times, extra_times):
 
 def tag_data(data):
 	entities = tag_regex_data(data)
+	speakers = entities['speaker']
+	#tagger = StanfordNERTagger('english.all.3class.distsim.crf.ser.gz')
+	for speaker in speakers:
+		if " and " in speaker:
+			speakers.remove(speaker)
+			for s in speaker.split(" and "):
+				speakers.append(s)
 
-	return  entities
+
+	return entities
 
 
 def remove_sentence_noise(data):
@@ -53,7 +61,7 @@ def tag_regex_data(data):
 		'time': '(?:Time:\s*)('+tregex+')\s*-\s*('+tregex+')|(?:Time:\s*)('+tregex+')',
 		'sentence': '[A-Z][^\.\!\?]*[\.\!\?](?:(?=\s)|"\s+[a-z][^\.\!\?]*[\.\!\?]|[A-z][^\.\!\?]*[\.\!\?]|)',
 		'location': '(?:Place|WHERE|Location)(?::\s*)(.*)',
-		'speaker': '(?:Who|WHO|Speaker|SPEAKER)(?::\s*)([^,(\n]*)',
+		'speaker': '(?:Who|WHO|Speaker|SPEAKER)(?::\s*)([^,(\n/-]*)',
 		'speaker2': '(?:Lecture by\s)([^,(\n]*)'
 	}
 	entities = dict()

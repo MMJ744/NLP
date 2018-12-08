@@ -3,7 +3,7 @@ from nltk.corpus.reader import WordListCorpusReader
 from nltk.corpus.reader import PlaintextCorpusReader
 from os import listdir
 from os.path import isfile, join
-from tag import tag_regex_data, save_tagged_data
+from tag import tag_data, save_tagged_data
 from evaluation import  eval_all
 from pickle import load
 
@@ -18,7 +18,7 @@ for c in range(301, 485): #485
     file = open('data/untagged/' + str(c) + '.txt', 'r')
     text = file.read()
     file.close()
-    entities = tag_regex_data(text)
+    entities = tag_data(text)
     self.append(entities)
     save_tagged_data(text, entities, c)
 eval = eval_all(self)
