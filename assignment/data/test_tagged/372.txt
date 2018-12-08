@@ -10,7 +10,7 @@ Abstract:
 
 --
 
-<paragraph><sentence>Today at 2PM in <location>WeH 4625</location>, <speaker>Laurent Renouard</speaker> of ISTAR, a French compary
+<paragraph><sentence>Today at <stime>2PM</stime> in <location>WeH 4625</location>, <speaker>Laurent Renouard</speaker> of ISTAR, a French compary
 focussing on issues in remote sensing, will be giving a brief talk entitled
 "DTM from SPOT and Aerial Images"</sentence>.  <sentence>Additionally, <speaker>Frederic Perlant</speaker> will
 present some preliminary results doing interferometry with RADAR imagery</sentence>.

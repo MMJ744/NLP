@@ -50,8 +50,8 @@ def tag_data(data):
 
 def remove_sentence_noise(data):
 	data = data.split('Abstract:', 1)[1]
-	pattern = '\n(?:\n|\s*--.*|\s*\n)'
-	#data = re.sub(pattern,'',data)
+	pattern = '\n\s*--.*'
+	data = re.sub(pattern,'',data)
 	return data
 
 
@@ -65,11 +65,9 @@ def tag_regex_data(data):
 		'speaker2': '(?:Lecture by\s)([^,(\n]*)'
 	}
 	entities = dict()
+	entities['paragraph'] = remove_sentence_noise(data).split("\n\n")
 	entities['sentence'] = nltk.sent_tokenize(remove_sentence_noise(data))
-	#entities['sentence'] = re.findall(patterns['sentence'],remove_sentence_noise(data))
 	entities['sentence'] = [x[:-1] for x in entities['sentence']]
-	#for x in entities['sentence']:
-	#	if x=='Dr': entities['sentence'].remove(x)
 	entities['time'] = re.findall(patterns['time'], data)
 	entities['location'] = re.findall(patterns['location'], data)
 	entities['speaker'] = re.findall(patterns['speaker'], data)

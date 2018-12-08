@@ -18,15 +18,13 @@ for c in range(301, 485): #485
     file = open('data/untagged/' + str(c) + '.txt', 'r')
     text = file.read()
     file.close()
-    get_topic(text, c)
+    #get_topic(text, c)
     entities = tag_data(text)
     self.append(entities)
     save_tagged_data(text, entities, c)
-print_tree()
+#print_tree()
 eval = eval_all(self)
 for key, value in eval.items():
     print('***-'+key.upper()+'-***')
     for k, v in value.items():
         print(k + ': ' + str(v*100) + '%')
-print(getRelevant('robotics'))
-print(getRelevant('students'))

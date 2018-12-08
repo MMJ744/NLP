@@ -69,7 +69,7 @@ def get_topic(email, number):
 	else:
 		topic = re.sub('\sSeminar', '', topic)
 		print(topic)
-		parent = ''
+		parent = None
 		syns = wordnet.synsets(topic)
 		if len(syns) == 0:
 			parent = 'misc'
