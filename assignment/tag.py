@@ -1,4 +1,4 @@
-import re
+import re, nltk
 from nltk.tag.stanford import  StanfordPOSTagger, StanfordNERTagger
 def save_tagged_data(data, entities, number):
 	tagged_data = ""
@@ -37,7 +37,7 @@ def sort_times(times, extra_times):
 def tag_data(data):
 	entities = tag_regex_data(data)
 	speakers = entities['speaker']
-	#tagger = StanfordNERTagger('english.all.3class.distsim.crf.ser.gz')
+	#tagger = StanfordNERTagger('C:/Users/Matthew/stanford-ner-2018-10-16/classifiers/english.all.3class.distsim.crf.ser.gz')
 	for speaker in speakers:
 		if " and " in speaker:
 			speakers.remove(speaker)
@@ -50,8 +50,8 @@ def tag_data(data):
 
 def remove_sentence_noise(data):
 	data = data.split('Abstract:', 1)[1]
-	pattern = '\n(?:\s\s.*|----.*|\s*(?:[A-z]\s?)*:)'
-	data = re.sub(pattern,'',data)
+	pattern = '\n(?:\n|\s*--.*|\s*\n)'
+	#data = re.sub(pattern,'',data)
 	return data
 
 
@@ -65,10 +65,11 @@ def tag_regex_data(data):
 		'speaker2': '(?:Lecture by\s)([^,(\n]*)'
 	}
 	entities = dict()
-	entities['sentence'] = re.findall(patterns['sentence'],remove_sentence_noise(data))
+	entities['sentence'] = nltk.sent_tokenize(remove_sentence_noise(data))
+	#entities['sentence'] = re.findall(patterns['sentence'],remove_sentence_noise(data))
 	entities['sentence'] = [x[:-1] for x in entities['sentence']]
-	for x in entities['sentence']:
-		if x=='Dr': entities['sentence'].remove(x)
+	#for x in entities['sentence']:
+	#	if x=='Dr': entities['sentence'].remove(x)
 	entities['time'] = re.findall(patterns['time'], data)
 	entities['location'] = re.findall(patterns['location'], data)
 	entities['speaker'] = re.findall(patterns['speaker'], data)

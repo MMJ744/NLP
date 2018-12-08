@@ -68,6 +68,7 @@ def evaluate_tagging(pretagged, selftagged):
 	correct_dict = {'stime': 0, 'etime': 0, 'speaker': 0, 'location': 0, 'sentence': 0, 'paragraph': 0, 'total': 0}
 	pre_totals = correct_dict.copy()
 	self_totals = correct_dict.copy()
+	print("Wrong:")
 	for c in range(0, len(pretagged)):
 		count_entities(pretagged[c], pre_totals)
 		count_entities(selftagged[c], self_totals)
