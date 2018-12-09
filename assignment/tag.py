@@ -1,5 +1,8 @@
 import re, nltk
 from nltk.tag.stanford import  StanfordPOSTagger, StanfordNERTagger
+from pickle import load
+
+
 def save_tagged_data(data, entities, number):
 	tagged_data = ""
 	for part, items in entities.items():
@@ -32,18 +35,33 @@ def sort_times(times, extra_times):
 	for time in extra_times:
 		if equal_time(time, stime): stimes.add(time)
 		if equal_time(time, etime): etimes.add(time)
-	return (stimes, etimes)
+	return stimes, etimes
+
+
+def find_speakers(data, found):
+	#tagger = StanfordNERTagger('C:/Users/Matthew/stanford-ner-2018-10-16/classifiers/english.all.3class.distsim.crf.ser.gz')
+	input = open('data/bestTagger.pkl', 'rb')
+	postagger = load(input)
+	input.close()
+	sents = data.split()
+	postagged = postagger.tag(sents)
+	pnouns = []
+	for word, tag in postagged:
+		if tag == 'NNP':
+			pnouns = pnouns + [word]
+	return found
+
 
 def tag_data(data):
 	entities = tag_regex_data(data)
 	speakers = entities['speaker']
-	#tagger = StanfordNERTagger('C:/Users/Matthew/stanford-ner-2018-10-16/classifiers/english.all.3class.distsim.crf.ser.gz')
+
 	for speaker in speakers:
 		if " and " in speaker:
 			speakers.remove(speaker)
 			for s in speaker.split(" and "):
 				speakers.append(s)
-
+	entities['speaker'] = find_speakers(data.split('Abstract:', 1)[1], entities['speaker'])
 
 	return entities
 
@@ -65,7 +83,7 @@ def tag_regex_data(data):
 		'speaker2': '(?:Lecture by\s)([^,(\n]*)'
 	}
 	entities = dict()
-	entities['paragraph'] = remove_sentence_noise(data).split("\n\n")
+	entities['paragraph'] = data.split('Abstract:', 1)[1].split("\n\n")
 	entities['sentence'] = nltk.sent_tokenize(remove_sentence_noise(data))
 	entities['sentence'] = [x[:-1] for x in entities['sentence']]
 	entities['time'] = re.findall(patterns['time'], data)
