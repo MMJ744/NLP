@@ -61,7 +61,7 @@ def tag_regex_data(data):
 		'time': '(?:Time:\s*)('+tregex+')\s*-\s*('+tregex+')|(?:Time:\s*)('+tregex+')',
 		'sentence': '[A-Z][^\.\!\?]*[\.\!\?](?:(?=\s)|"\s+[a-z][^\.\!\?]*[\.\!\?]|[A-z][^\.\!\?]*[\.\!\?]|)',
 		'location': '(?:Place|WHERE|Location)(?::\s*)(.*)',
-		'speaker': '(?:Who|WHO|Speaker|SPEAKER)(?::\s*)([^,(\n/-]*)',
+		'speaker': '(?:Who|WHO|Speaker|SPEAKER)(?::\s*)([^,(\n/-]*(?:,\s(?:Jr.|Ph.D))?)',
 		'speaker2': '(?:Lecture by\s)([^,(\n]*)'
 	}
 	entities = dict()
